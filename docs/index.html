@@ -234,6 +234,33 @@ body::after {
   letter-spacing: 0.02em;
 }
 
+/* ── Smooth resize transitions ── */
+.card {
+  transition:
+    width 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pfp {
+  transition:
+    width 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.username, .username-handle, .status, .terminal, .result h3, .glitch-text {
+  transition:
+    font-size 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.progress {
+  transition:
+    height 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* ── Avatar wobble on hover ── */
 @keyframes wobble {
   0%   { transform: rotate(0deg)    scale(1.05); }
@@ -343,7 +370,7 @@ body::after {
 /* Applied via JS when result shown */
 .result.visible {
   display: block;
-  animation: cinematicReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: cinematicReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes cinematicReveal {
@@ -366,7 +393,7 @@ body::after {
 }
 
 .sink-out {
-  animation: sinkOut 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+  animation: sinkOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
   pointer-events: none;
 }
 
@@ -854,8 +881,8 @@ function runStep(i) {
           setTimeout(() => {
             document.getElementById("glitchText").classList.add("play")
           }, 900)
-        }, 320)
-      }, 600)
+        }, 250)
+      }, 350)
     })
     return
   }
