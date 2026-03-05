@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Discord Presence Verification</title>
+
+<style>
+
+body{
+margin:0;
+background:#2b2d31;
+font-family:Arial, sans-serif;
+color:white;
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+/* top banner */
+.banner{
+width:100%;
+height:140px;
+background:#ff2b2b;
+}
+
+/* center container */
+.center{
+display:flex;
+justify-content:center;
+align-items:center;
+height:60vh;
+width:100%;
+}
+
+/* verification card */
+.card{
+background:#313338;
+border-radius:16px;
+padding:30px;
+width:420px;
+box-shadow:0 10px 30px rgba(0,0,0,0.5);
+text-align:left;
+}
+
+/* user row */
+.user{
+display:flex;
+align-items:center;
+gap:14px;
+margin-bottom:20px;
+}
+
+.pfp{
+width:64px;
+height:64px;
+border-radius:12px;
+background-image:url("assets/main_avatar.jpeg");
+background-size:cover;
+background-position:center;
+box-shadow:0 4px 10px rgba(0,0,0,0.5);
+transition:transform .25s ease, box-shadow .25s ease;
+}
+
+.pfp:hover{
+transform:scale(1.05);
+box-shadow:0 8px 20px rgba(255,0,0,0.6);
+}
+
+.username{
+font-size:22px;
+font-weight:600;
+}
+
+/* progress bar */
+.progress{
+width:100%;
+height:14px;
+background:#1e1f22;
+border-radius:20px;
+overflow:hidden;
+}
+
+.bar{
+height:100%;
+width:0%;
+background:#ff2b2b;
+transition:width .3s;
+border-radius:20px;
+}
+
+/* status text */
+.status{
+margin-top:10px;
+opacity:.8;
+}
+
+/* result */
+.result{
+display:none;
+text-align:center;
+margin-top:10px;
+}
+
+button{
+margin-top:18px;
+background:#5865F2;
+border:none;
+color:white;
+padding:12px 20px;
+border-radius:8px;
+cursor:pointer;
+font-size:15px;
+}
+
+button:hover{
+background:#4752c4;
+}
+
+/* bottom right corner avatar */
+.corner-avatar{
+position:fixed;
+bottom:20px;
+right:20px;
+width:90px;
+height:90px;
+border-radius:12px;
+background-image:url("assets/corner_avatar.jpeg");
+background-size:cover;
+background-position:center;
+box-shadow:0 6px 16px rgba(0,0,0,0.45);
+transition: transform 0.25s ease, box-shadow 0.25s ease;
+cursor:pointer;
+}
+
+.corner-avatar:hover{
+transform:scale(1.05);
+box-shadow:0 10px 25px rgba(88,101,242,0.7);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="banner"></div>
+
+<div class="center">
+
+<div class="card">
+
+<div class="user">
+<div class="pfp"></div>
+<div class="username">𝘡𝘶𝘬𝘪 (ずき)</div>
+</div>
+
+<div class="progress">
+<div class="bar" id="bar"></div>
+</div>
+
+<div class="status" id="status">
+Initializing presence verification...
+</div>
+
+<div class="result" id="result">
+
+<h3>That's not very nice, let them sleep in peace 😴</h3>
+
+<button onclick="window.location.href='https://discord.com/app'">
+Return to Discord
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="corner-avatar"></div>
+
+<script>
+
+const steps=[
+"Checking activity status...",
+"Pinging device...",
+"Reading presence state...",
+"Verifying user session..."
+]
+
+const bar=document.getElementById("bar")
+const status=document.getElementById("status")
+
+// Random total duration between 2.5s and 10s
+const totalTime=2500 + Math.random()*7500
+const interval=150
+
+let elapsed=0
+let stepIndex=0
+
+let timer=setInterval(()=>{
+
+elapsed+=interval
+
+let progress=(elapsed/totalTime)*100
+bar.style.width=progress+"%"
+
+if(stepIndex<steps.length && progress>((stepIndex+1)*(100/steps.length))){
+status.innerText=steps[stepIndex]
+stepIndex++
+}
+
+if(elapsed>=totalTime){
+clearInterval(timer)
+status.style.display="none"
+document.getElementById("result").style.display="block"
+}
+
+},interval)
+
+</script>
+
+</body>
+</html>
