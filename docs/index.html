@@ -23,8 +23,19 @@ html, body {
 .banner {
   width: 100%;
   height: clamp(80px, 14vw, 140px);
-  background: #ff2b2b;
+  position: relative;
+  overflow: hidden;
   flex-shrink: 0;
+  background: #ff2b2b;
+}
+
+.banner-bg {
+  position: absolute;
+  inset: -30px;
+  background-image: url('assets/banner_main_colour.png');
+  background-size: cover;
+  background-position: center;
+  filter: blur(16px) brightness(0.55) saturate(1.4);
 }
 
 .center {
@@ -321,7 +332,9 @@ button:hover { background: #4752c4; }
 </head>
 <body>
 
-<div class="banner"></div>
+<div class="banner">
+  <div class="banner-bg"></div>
+</div>
 
 <div class="center">
   <div class="card">
