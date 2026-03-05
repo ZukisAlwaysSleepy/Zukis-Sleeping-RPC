@@ -2,220 +2,469 @@
 <html>
 <head>
 <title>Discord Presence Verification</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 
-body{
-margin:0;
-background:#2b2d31;
-font-family:Arial, sans-serif;
-color:white;
-display:flex;
-flex-direction:column;
-align-items:center;
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background: #2b2d31;
+  font-family: Arial, sans-serif;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* top banner */
-.banner{
-width:100%;
-height:140px;
-background:#ff2b2b;
+.banner {
+  width: 100%;
+  height: clamp(80px, 14vw, 140px);
+  background: #ff2b2b;
+  flex-shrink: 0;
 }
 
-/* center container */
-.center{
-display:flex;
-justify-content:center;
-align-items:center;
-height:60vh;
-width:100%;
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+  padding: clamp(20px, 5vw, 60px) clamp(12px, 4vw, 40px);
 }
 
-/* verification card */
-.card{
-background:#313338;
-border-radius:16px;
-padding:30px;
-width:420px;
-box-shadow:0 10px 30px rgba(0,0,0,0.5);
-text-align:left;
+.card {
+  background: #313338;
+  border-radius: clamp(10px, 2vw, 16px);
+  padding: clamp(18px, 3vw, 30px);
+  width: min(440px, 92vw);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  text-align: left;
 }
 
-/* user row */
-.user{
-display:flex;
-align-items:center;
-gap:14px;
-margin-bottom:20px;
+.user {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2vw, 14px);
+  margin-bottom: clamp(14px, 2.5vw, 22px);
 }
 
-.pfp{
-width:64px;
-height:64px;
-border-radius:12px;
-background-image:url("assets/main_avatar.jpeg");
-background-size:cover;
-background-position:center;
-box-shadow:0 4px 10px rgba(0,0,0,0.5);
-transition:transform .25s ease, box-shadow .25s ease;
+.pfp {
+  width: clamp(44px, 10vw, 64px);
+  height: clamp(44px, 10vw, 64px);
+  border-radius: clamp(8px, 1.5vw, 12px);
+  object-fit: cover;
+  object-position: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: block;
+  background: #1e1f22;
+  flex-shrink: 0;
 }
 
-.pfp:hover{
-transform:scale(1.05);
-box-shadow:0 8px 20px rgba(255,0,0,0.6);
+.pfp:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(255,0,0,0.6);
 }
 
-.username{
-font-size:22px;
-font-weight:600;
+.user-info { display: flex; flex-direction: column; gap: 3px; }
+
+.username {
+  font-size: clamp(16px, 4vw, 22px);
+  font-weight: 600;
+  line-height: 1.15;
 }
 
-/* progress bar */
-.progress{
-width:100%;
-height:14px;
-background:#1e1f22;
-border-radius:20px;
-overflow:hidden;
+.username-handle {
+  font-size: clamp(11px, 2.5vw, 13px);
+  font-style: italic;
+  color: #6d6f78;
+  letter-spacing: 0.02em;
 }
 
-.bar{
-height:100%;
-width:0%;
-background:#ff2b2b;
-transition:width .3s;
-border-radius:20px;
+/* ── Progress bar ── */
+.progress {
+  width: 100%;
+  height: clamp(10px, 1.8vw, 14px);
+  background: #1e1f22;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
-/* status text */
-.status{
-margin-top:10px;
-opacity:.8;
+.bar {
+  height: 100%;
+  width: 0%;
+  background: #ff2b2b;
+  border-radius: 20px;
+  position: relative;
 }
 
-/* result */
-.result{
-display:none;
-text-align:center;
-margin-top:10px;
+.bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    rgba(255,255,255,0.09) 2px,
+    transparent 4px
+  );
+  animation: scanMove 0.35s linear infinite;
 }
 
-button{
-margin-top:18px;
-background:#5865F2;
-border:none;
-color:white;
-padding:12px 20px;
-border-radius:8px;
-cursor:pointer;
-font-size:15px;
+@keyframes scanMove {
+  from { background-position: 0 0; }
+  to   { background-position: 40px 0; }
 }
 
-button:hover{
-background:#4752c4;
+/* ── Main status (normal font, white-ish) ── */
+.status {
+  margin-top: clamp(8px, 1.5vw, 12px);
+  font-size: clamp(12px, 2.8vw, 15px);
+  color: rgba(255,255,255,0.8);
+  min-height: 1.5em;
+  transition: opacity 0.12s ease;
+}
+.status.fade { opacity: 0; }
+
+.cursor {
+  display: inline-block;
+  width: clamp(5px, 1vw, 7px);
+  height: clamp(11px, 2vw, 14px);
+  background: #ff2b2b;
+  margin-left: 3px;
+  vertical-align: middle;
+  animation: blink 0.7s step-start infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ── Terminal sub-line (monospace, faded grey, aggressive swap) ── */
+.terminal {
+  margin-top: clamp(4px, 1vw, 7px);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: clamp(10px, 2vw, 12px);
+  color: #4a4e57;
+  min-height: 1.4em;
+  letter-spacing: 0.03em;
+  transition: opacity 0.08s ease;   /* very fast fade for aggressive feel */
+}
+.terminal.fade { opacity: 0; }
+
+/* ── Result ── */
+.result {
+  display: none;
+  text-align: center;
+  margin-top: clamp(8px, 1.5vw, 12px);
+  animation: fadeIn 0.4s ease forwards;
+}
+.result h3 { font-size: clamp(13px, 3vw, 16px); margin: 0 0 4px; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* bottom right corner avatar */
-.corner-avatar{
-position:fixed;
-bottom:20px;
-right:20px;
-width:90px;
-height:90px;
-border-radius:12px;
-background-image:url("assets/corner_avatar.jpeg");
-background-size:cover;
-background-position:center;
-box-shadow:0 6px 16px rgba(0,0,0,0.45);
-transition: transform 0.25s ease, box-shadow 0.25s ease;
-cursor:pointer;
+/* ── Glitch text ── */
+.glitch-wrap {
+  margin-top: clamp(6px, 1.2vw, 10px);
+  min-height: 1.4em;
 }
 
-.corner-avatar:hover{
-transform:scale(1.05);
-box-shadow:0 10px 25px rgba(88,101,242,0.7);
+.glitch-text {
+  display: inline-block;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: clamp(11px, 2.2vw, 13px);
+  color: #ff2b2b;
+  opacity: 0;
+  letter-spacing: 0.08em;
+  position: relative;
+}
+
+.glitch-text.play {
+  animation: glitchReveal 1.8s steps(1) forwards;
+}
+
+@keyframes glitchReveal {
+  0%   { opacity: 0;   transform: skewX(0deg);    filter: none; }
+  8%   { opacity: 0.9; transform: skewX(-12deg);  filter: blur(1px) brightness(2); }
+  10%  { opacity: 0;   transform: skewX(0deg);    filter: none; }
+  18%  { opacity: 0.8; transform: skewX(8deg);    filter: blur(2px); }
+  20%  { opacity: 0;   transform: skewX(0deg);    filter: none; }
+  30%  { opacity: 1;   transform: skewX(-4deg) translateX(-3px); filter: blur(0.5px) brightness(1.6); }
+  33%  { opacity: 0;   transform: skewX(0deg);    filter: none; }
+  44%  { opacity: 1;   transform: skewX(6deg) translateX(4px);  filter: blur(1px); }
+  46%  { opacity: 0;   transform: skewX(0deg);    filter: none; }
+  55%  { opacity: 1;   transform: skewX(-2deg);   filter: brightness(1.8); }
+  57%  { opacity: 0.3; transform: skewX(0deg);    filter: none; }
+  68%  { opacity: 1;   transform: skewX(3deg) translateX(-2px); filter: blur(0.5px); }
+  70%  { opacity: 0.6; transform: skewX(0deg);    filter: none; }
+  80%  { opacity: 1;   transform: skewX(-1deg);   filter: brightness(1.3); }
+  88%  { opacity: 0.9; transform: skewX(0deg);    filter: none; }
+  100% { opacity: 1;   transform: skewX(0deg) translateX(0); filter: none; }
+}
+
+button {
+  margin-top: clamp(12px, 2vw, 18px);
+  background: #5865F2;
+  border: none;
+  color: white;
+  padding: clamp(9px, 1.8vw, 12px) clamp(14px, 3vw, 20px);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: clamp(13px, 2.5vw, 15px);
+  transition: background 0.2s;
+}
+button:hover { background: #4752c4; }
+
+/* ── Corner avatar ── */
+.corner-link {
+  position: fixed;
+  bottom: clamp(12px, 2.5vw, 20px);
+  right: clamp(12px, 2.5vw, 20px);
+  display: block;
+  width: clamp(56px, 10vw, 90px);
+  height: clamp(56px, 10vw, 90px);
+  border-radius: clamp(8px, 1.5vw, 12px);
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  text-decoration: none;
+}
+.corner-link:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(88,101,242,0.7);
+}
+.corner-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  background: #1e1f22;
 }
 
 </style>
 </head>
-
 <body>
 
 <div class="banner"></div>
 
 <div class="center">
+  <div class="card">
 
-<div class="card">
+    <div class="user">
+      <img class="pfp" src="main_avatar.jpeg" alt="Avatar" />
+      <div class="user-info">
+        <div class="username">𝘡𝘶𝘬𝘪 (ずき)</div>
+        <div class="username-handle">_callmezuki_</div>
+      </div>
+    </div>
 
-<div class="user">
-<div class="pfp"></div>
-<div class="username">𝘡𝘶𝘬𝘪 (ずき)</div>
+    <div class="progress">
+      <div class="bar" id="bar"></div>
+    </div>
+
+    <div class="status" id="status">
+      <span id="statusText">Initializing...</span><span class="cursor"></span>
+    </div>
+    <div class="terminal" id="terminal">&nbsp;</div>
+
+    <div class="result" id="result">
+      <h3>That's not very nice, let them sleep in peace</h3>
+      <div class="glitch-wrap">
+        <span class="glitch-text" id="glitchText">stop stalking me</span>
+      </div>
+      <button onclick="window.location.href='https://discord.com/app'">
+        Return to Discord
+      </button>
+    </div>
+
+  </div>
 </div>
 
-<div class="progress">
-<div class="bar" id="bar"></div>
-</div>
-
-<div class="status" id="status">
-Initializing presence verification...
-</div>
-
-<div class="result" id="result">
-
-<h3>That's not very nice, let them sleep in peace 😴</h3>
-
-<button onclick="window.location.href='https://discord.com/app'">
-Return to Discord
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="corner-avatar"></div>
+<a class="corner-link" href="https://www.tiktok.com/@callmezuki0" target="_blank" rel="noopener">
+  <img class="corner-avatar" src="corner_avatar.jpeg" alt="TikTok" />
+</a>
 
 <script>
 
-const steps=[
-"Checking activity status...",
-"Pinging device...",
-"Reading presence state...",
-"Verifying user session..."
+// Each entry: main status label + a list of terminal sub-lines that
+// cycle quickly underneath it while the bar jitters through that segment.
+const steps = [
+  {
+    status: "Connecting to gateway...",
+    terms: [
+      "opening socket...",
+      "socket open",
+      "fetching client ID...",
+      "client ID = 1241309752948387003",
+      "client ID attached",
+    ]
+  },
+  {
+    status: "Fetching presence status...",
+    terms: [
+      "fetching presence status...",
+      "presence status = IDLE",
+      "fetching session flags...",
+      "session flags = 0x04",
+      "session flags attached",
+    ]
+  },
+  {
+    status: "Reading device state...",
+    terms: [
+      "fetching device state...",
+      "device state = idle",
+      "fetching last active timestamp...",
+      "last_active = 7 min ago",
+      "activity timeout confirmed",
+    ]
+  },
+  {
+    status: "Scanning active processes...",
+    terms: [
+      "scanning process list...",
+      "discord.exe — status: idle",
+      "no media processes detected",
+      "no game activity detected",
+      "process scan complete",
+    ]
+  },
+  {
+    status: "Verifying presence report...",
+    terms: [
+      "cross-referencing session data...",
+      "idle flag = confirmed",
+      "fetching afk timeout value...",
+      "afk_timeout = 600s",
+      "report sealed — user is asleep",
+    ]
+  },
 ]
 
-const bar=document.getElementById("bar")
-const status=document.getElementById("status")
+// Total run time random 4s–10s, split across steps
+const totalMs = 4000 + Math.random() * 6000
+const rawW    = steps.map(() => 0.6 + Math.random())
+const wSum    = rawW.reduce((a,b) => a+b, 0)
+const slices  = rawW.map(w => (w / wSum) * totalMs)
 
-// Random total duration between 2.5s and 10s
-const totalTime=2500 + Math.random()*7500
-const interval=150
+const barEl      = document.getElementById("bar")
+const statusEl   = document.getElementById("status")
+const statusTxt  = document.getElementById("statusText")
+const terminalEl = document.getElementById("terminal")
 
-let elapsed=0
-let stepIndex=0
+let currentPct = 0
 
-let timer=setInterval(()=>{
+// Jitter bar to targetPct over durationMs with rAF — no CSS transition
+function jitterTo(targetPct, durationMs, onDone) {
+  const startPct  = currentPct
+  const startTime = performance.now()
+  let   lastStutter = 0
 
-elapsed+=interval
+  ;(function tick(now) {
+    const elapsed = now - startTime
+    const rawT    = Math.min(elapsed / durationMs, 1)
+    const eased   = 1 - Math.pow(1 - rawT, 2)
+    let   base    = startPct + (targetPct - startPct) * eased
 
-let progress=(elapsed/totalTime)*100
-bar.style.width=progress+"%"
+    const noise   = (Math.random() - 0.5) * 1.8
+    let stutter   = 0
+    if (now - lastStutter > 500 + Math.random() * 800) {
+      stutter     = -(Math.random() * 3.5)
+      lastStutter = now
+    }
+    const spike   = Math.random() < 0.04 ? Math.random() * 2.5 : 0
 
-if(stepIndex<steps.length && progress>((stepIndex+1)*(100/steps.length))){
-status.innerText=steps[stepIndex]
-stepIndex++
+    let display   = base + noise + stutter + spike
+    display       = Math.max(currentPct - 1, Math.min(targetPct + 1.5, display))
+
+    barEl.style.width = display.toFixed(2) + "%"
+    currentPct        = display
+
+    if (rawT < 1) requestAnimationFrame(tick)
+    else {
+      barEl.style.width = targetPct + "%"
+      currentPct = targetPct
+      onDone()
+    }
+  })(performance.now())
 }
 
-if(elapsed>=totalTime){
-clearInterval(timer)
-status.style.display="none"
-document.getElementById("result").style.display="block"
+// Swap main status text with quick fade
+function setStatus(text) {
+  statusEl.classList.add("fade")
+  setTimeout(() => {
+    statusTxt.textContent = text
+    statusEl.classList.remove("fade")
+  }, 120)
 }
 
-},interval)
+// Cycle terminal lines aggressively — very short dwell per line
+function cycleTerminal(terms, durationMs, onDone) {
+  let idx = 0
+  terminalEl.textContent = terms[0]
+
+  // Each line gets an equal slice of ~75% of the step duration
+  const interval = (durationMs * 0.75) / terms.length
+
+  function next() {
+    if (idx >= terms.length - 1) return
+    idx++
+    terminalEl.classList.add("fade")
+    setTimeout(() => {
+      terminalEl.textContent = terms[idx]
+      terminalEl.classList.remove("fade")
+    }, 80)   // 80ms fade — snappy
+    setTimeout(next, interval * (0.75 + Math.random() * 0.5))
+  }
+
+  setTimeout(next, interval * (0.5 + Math.random() * 0.5))
+  setTimeout(onDone, durationMs)
+}
+
+// Run each step in sequence
+function runStep(i) {
+  if (i >= steps.length) {
+    jitterTo(100, 500, () => {
+      setStatus("Verification complete.")
+      terminalEl.textContent = "report sealed — user is asleep"
+      setTimeout(() => {
+        statusEl.style.display   = "none"
+        terminalEl.style.display = "none"
+        const resultEl = document.getElementById("result")
+        resultEl.style.display = "block"
+        setTimeout(() => {
+          document.getElementById("glitchText").classList.add("play")
+        }, 300)
+      }, 450)
+    })
+    return
+  }
+
+  const step      = steps[i]
+  const dur       = slices[i]
+  const targetPct = ((i + 1) / steps.length) * 94
+
+  setStatus(step.status)
+
+  let barDone  = false
+  let termDone = false
+
+  function tryNext() {
+    if (barDone && termDone)
+      setTimeout(() => runStep(i + 1), 80 + Math.random() * 150)
+  }
+
+  jitterTo(targetPct, dur, () => { barDone  = true; tryNext() })
+  cycleTerminal(step.terms, dur, () => { termDone = true; tryNext() })
+}
+
+runStep(0)
 
 </script>
-
 </body>
 </html>
